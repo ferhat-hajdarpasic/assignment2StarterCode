@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
-public class MaliciousNode implements Node {
+public class CompliantNode implements Node {
    
-   public MaliciousNode(double p_graph, double p_malicious, double p_txDistribution, int numRounds) {
+   public CompliantNode(double p_graph, double p_malicious, double p_txDistribution, int numRounds) {
    }
    
    public void receiveCandidates(ArrayList<Integer[]> candidates) {

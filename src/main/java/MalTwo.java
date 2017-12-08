@@ -20,7 +20,7 @@ public class MalTwo implements Node {
       this.pendingTransactions = pendingTransactions; 
    }
 
-   public Set<Transaction> getProposals() {
+   public Set<Transaction> sendToFollowers() {
       HashSet<Transaction> randomTransactions = new HashSet<Transaction>();
       double p = .7; // take 70% of transactions
       for (Transaction tx : pendingTransactions) {
@@ -31,12 +31,10 @@ public class MalTwo implements Node {
    }
 
    // add all Transactions to pendingTransactions
-   public void receiveCandidates(ArrayList<Integer[]> candidates) {     
-      for(Integer[] candidate : candidates) {
-         Transaction tx = new Transaction(candidate[0]);
-         if(!this.pendingTransactions.contains(tx))
-            this.pendingTransactions.add(tx);
+   public void receiveFromFollowees(Set<Candidate> candidates) {     
+      for(Candidate candidate : candidates) {
+         if(!this.pendingTransactions.contains(candidate.tx))
+            this.pendingTransactions.add(candidate.tx);
       }
-
    }
 }

@@ -19,17 +19,16 @@ public class MalThree implements Node {
       this.pendingTransactions = pendingTransactions;
    }
 
-   public Set<Transaction> getProposals() {
+   public Set<Transaction> sendToFollowers() {
       return pendingTransactions;
    }
 
    // accept all transactions from even followees
-   public void receiveCandidates(ArrayList<Integer[]> candidates) {     
-      for(Integer[] candidate : candidates) {
-         if (candidate[1] % 2 == 0) { 
-            Transaction tx = new Transaction(candidate[0]);
-            if(!this.pendingTransactions.contains(tx))
-               this.pendingTransactions.add(tx);
+   public void receiveFromFollowees(Set<Candidate> candidates) {     
+      for(Candidate candidate : candidates) {
+         if (candidate.sender % 2 == 0) { 
+            if(!this.pendingTransactions.contains(candidate.tx))
+               this.pendingTransactions.add(candidate.tx);
          }  
       }
    }

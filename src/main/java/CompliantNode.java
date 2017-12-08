@@ -1,33 +1,40 @@
-/* This malicious node could be thought of as being turned off.
- * It never broadcasts any transactions or responds to any
- * communication with other nodes.
- * 
- * Note that this is just one example (the simplest one) of a
- * malicious node.
- */
-
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.HashSet;
 
+/* CompliantNode refers to a node that follows the rules (not malicious)*/
 public class CompliantNode implements Node {
-   
-   public CompliantNode(double p_graph, double p_malicious, double p_txDistribution, int numRounds) {
-   }
-   
-   public void receiveCandidates(ArrayList<Integer[]> candidates) {
-      return;
-   }
-   
-   public Set<Transaction> getProposals() {
-      return new HashSet<Transaction>();
-   }
+    private double p_graph;
+    private double p_malicious;
+    private double p_txDistribution;
+    private int numRounds;
 
-   public void setFollowees(boolean[] followees) {
-      return;
-   }
+    private boolean[] followees;
+    private Set<Transaction> pendingTransactions;
 
-   public void setPendingTransaction(Set<Transaction> pendingTransactions) {
-      return;
-   }
+    public CompliantNode(double p_graph, double p_malicious, double p_txDistribution, int numRounds) {
+        this.p_graph = p_graph;
+        this.p_malicious = p_malicious;
+        this.p_txDistribution = p_txDistribution;
+        this.numRounds = numRounds;
+    }
+
+    public void setFollowees(boolean[] followees) {
+        this.followees = followees;
+    }
+
+    public void setPendingTransaction(Set<Transaction> pendingTransactions) {
+        this.pendingTransactions = pendingTransactions;
+    }
+
+    public Set<Transaction> sendToFollowers() {
+        return this.pendingTransactions;
+    }
+
+    public void receiveFromFollowees(Set<Candidate> candidates) {
+        for(Candidate candidate : candidates) {
+            if(!this.pendingTransactions.contains(candidate.tx)) {
+                this.pendingTransactions.add(candidate.tx);
+            }
+        }
+    }
 }

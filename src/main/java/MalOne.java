@@ -25,14 +25,14 @@ public class MalOne implements Node {
       this.pendingTransactions = pendingTransactions;
    }
 
-   public Set<Transaction> getProposals() {
+   public Set<Transaction> sendToFollowers() {
       this.round += 1;
       if (this.round == this.numRounds - 2)
          return pendingTransactions;
       return new HashSet<Transaction>();
    }
 
-   public void receiveCandidates(ArrayList<Integer[]> candidates) {
+   public void receiveFromFollowees(Set<Candidate> candidates) {
       return;
    }
 }

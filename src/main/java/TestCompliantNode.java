@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
+import java.util.TreeSet;
 import java.util.HashMap;
 
 public class TestCompliantNode {
@@ -45,7 +45,7 @@ public class TestCompliantNode {
       Node[] nodes = new Node[numNodes];
       for (int i = 0; i < numNodes; i++) {
          if(malicious[i])
-            nodes[i] = new MaliciousNode(p_graph, p_malicious, p_txDistribution, numRounds);
+            nodes[i] = new MalDoNothing(p_graph, p_malicious, p_txDistribution, numRounds);
          else
             nodes[i] = new CompliantNode(p_graph, p_malicious, p_txDistribution, numRounds);
       }
@@ -89,7 +89,7 @@ public class TestCompliantNode {
          HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
 
          for (int i = 0; i < numNodes; i++) {
-            Set<Transaction> proposals = nodes[i].getProposals();
+            Set<Transaction> proposals = nodes[i].sendToFollowers();
             for (Transaction tx : proposals) {
                if (!validTxIds.contains(tx.id))
                   continue; // ensure that each tx is actually valid
@@ -117,7 +117,7 @@ public class TestCompliantNode {
          // Distribute the Proposals to their intended recipients as Candidates
          for (int i = 0; i < numNodes; i++) {
             if (allProposals.containsKey(i))
-               nodes[i].receiveCandidates(allProposals.get(i));
+               nodes[i].receiveFromFollowees(allProposals.get(i));
          }
       }
 
@@ -126,7 +126,7 @@ public class TestCompliantNode {
       System.out.println("These are the number of transactions outputted by each of your compliant nodes:");
       for (int i = 0; i < numNodes; i++) {
          if (malicious[i]) continue;
-         Set<Transaction> transactions = nodes[i].getProposals();
+         Set<Transaction> transactions = nodes[i].sendToFollowers();
          System.out.print(transactions.size() + " ");
       }
       System.out.println();
@@ -163,7 +163,7 @@ public class TestCompliantNode {
          HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
 
          for (int i = 0; i < numNodes; i++) {
-            Set<Transaction> proposals = nodes[i].getProposals();
+            Set<Transaction> proposals = nodes[i].sendToFollowers();
             for (Transaction tx : proposals) {
                if (!validTxIds.contains(tx.id))
                   continue; // ensure that each tx is actually valid
@@ -191,7 +191,7 @@ public class TestCompliantNode {
          // Distribute the Proposals to their intended recipients as Candidates
          for (int i = 0; i < numNodes; i++) {
             if (allProposals.containsKey(i))
-               nodes[i].receiveCandidates(allProposals.get(i));
+               nodes[i].receiveFromFollowees(allProposals.get(i));
          }
       }
 
@@ -200,7 +200,7 @@ public class TestCompliantNode {
       System.out.println("These are the number of transactions outputted by each of your compliant nodes:");
       for (int i = 0; i < numNodes; i++) {
          if (malicious[i]) continue;
-         Set<Transaction> transactions = nodes[i].getProposals();
+         Set<Transaction> transactions = nodes[i].sendToFollowers();
          System.out.print(transactions.size() + " ");
       }
       System.out.println();
@@ -234,10 +234,10 @@ public class TestCompliantNode {
          // proposals. The value is an ArrayList containing 1x2 Integer arrays. The first
          // element of each array is the id of the transaction being proposed and the second
          // element is the index # of the node proposing the transaction.
-         HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
-
+         HashMap<Integer, Set<Candidate>> allProposals = new HashMap<Integer, Set<Candidate>>();
+         
          for (int i = 0; i < numNodes; i++) {
-            Set<Transaction> proposals = nodes[i].getProposals();
+            Set<Transaction> proposals = nodes[i].sendToFollowers();
             for (Transaction tx : proposals) {
                if (!validTxIds.contains(tx.id))
                   continue; // ensure that each tx is actually valid
@@ -246,17 +246,13 @@ public class TestCompliantNode {
                   if(!followees[j][i]) continue; // tx only matters if j follows i
 
                   if(allProposals.containsKey(j)) {
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id;
-                     candidate[1] = i; 
-                     allProposals.get(j).add(candidate);
+                        Candidate candidate = new Candidate(tx,i); 
+                        allProposals.get(j).add(candidate);
                   } else {
-                     ArrayList<Integer[]> candidates = new ArrayList<Integer[]>();
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id; 
-                     candidate[1] = i;   
-                     candidates.add(candidate);
-                     allProposals.put(j, candidates);
+                        TreeSet<Candidate> candidates = new TreeSet<Candidate>();
+                        Candidate candidate = new Candidate(tx,i); 
+                        candidates.add(candidate);
+                        allProposals.put(j, candidates);
                   }
                }
             }
@@ -265,7 +261,7 @@ public class TestCompliantNode {
          // Distribute the Proposals to their intended recipients as Candidates
          for (int i = 0; i < numNodes; i++) {
             if (allProposals.containsKey(i))
-               nodes[i].receiveCandidates(allProposals.get(i));
+               nodes[i].receiveFromFollowees(allProposals.get(i));
          }
       }
 
@@ -274,7 +270,7 @@ public class TestCompliantNode {
       System.out.println("These are the number of transactions outputted by each of your compliant nodes:");
       for (int i = 0; i < numNodes; i++) {
          if (malicious[i]) continue;
-         Set<Transaction> transactions = nodes[i].getProposals();
+         Set<Transaction> transactions = nodes[i].sendToFollowers();
          System.out.print(transactions.size() + " ");
       }
       System.out.println();
@@ -308,10 +304,10 @@ public class TestCompliantNode {
          // proposals. The value is an ArrayList containing 1x2 Integer arrays. The first
          // element of each array is the id of the transaction being proposed and the second
          // element is the index # of the node proposing the transaction.
-         HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
+         HashMap<Integer, Set<Candidate>> allProposals = new HashMap<Integer, Set<Candidate>>();
 
          for (int i = 0; i < numNodes; i++) {
-            Set<Transaction> proposals = nodes[i].getProposals();
+            Set<Transaction> proposals = nodes[i].sendToFollowers();
             for (Transaction tx : proposals) {
                if (!validTxIds.contains(tx.id))
                   continue; // ensure that each tx is actually valid
@@ -320,15 +316,11 @@ public class TestCompliantNode {
                   if(!followees[j][i]) continue; // tx only matters if j follows i
 
                   if(allProposals.containsKey(j)) {
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id;
-                     candidate[1] = i; 
+                     Candidate candidate = new Candidate(tx,i); 
                      allProposals.get(j).add(candidate);
                   } else {
-                     ArrayList<Integer[]> candidates = new ArrayList<Integer[]>();
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id; 
-                     candidate[1] = i;   
+                     TreeSet<Candidate> candidates = new TreeSet<Candidate>();
+                     Candidate candidate = new Candidate(tx,i); 
                      candidates.add(candidate);
                      allProposals.put(j, candidates);
                   }
@@ -339,7 +331,7 @@ public class TestCompliantNode {
          // Distribute the Proposals to their intended recipients as Candidates
          for (int i = 0; i < numNodes; i++) {
             if (allProposals.containsKey(i))
-               nodes[i].receiveCandidates(allProposals.get(i));
+               nodes[i].receiveFromFollowees(allProposals.get(i));
          }
       }
 
@@ -348,7 +340,7 @@ public class TestCompliantNode {
       System.out.println("These are the number of transactions outputted by each of your compliant nodes:");
       for (int i = 0; i < numNodes; i++) {
          if (malicious[i]) continue;
-         Set<Transaction> transactions = nodes[i].getProposals();
+         Set<Transaction> transactions = nodes[i].sendToFollowers();
          System.out.print(transactions.size() + " ");
       }
    }

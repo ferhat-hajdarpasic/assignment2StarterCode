@@ -86,8 +86,8 @@ public class TestCompliantNode {
          // proposals. The value is an ArrayList containing 1x2 Integer arrays. The first
          // element of each array is the id of the transaction being proposed and the second
          // element is the index # of the node proposing the transaction.
-         HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
-
+         HashMap<Integer, Set<Candidate>> allProposals = new HashMap<Integer, Set<Candidate>>();
+         
          for (int i = 0; i < numNodes; i++) {
             Set<Transaction> proposals = nodes[i].sendToFollowers();
             for (Transaction tx : proposals) {
@@ -98,17 +98,13 @@ public class TestCompliantNode {
                   if(!followees[j][i]) continue; // tx only matters if j follows i
 
                   if(allProposals.containsKey(j)) {
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id;
-                     candidate[1] = i; 
-                     allProposals.get(j).add(candidate);
+                        Candidate candidate = new Candidate(tx,i); 
+                        allProposals.get(j).add(candidate);
                   } else {
-                     ArrayList<Integer[]> candidates = new ArrayList<Integer[]>();
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id; 
-                     candidate[1] = i;   
-                     candidates.add(candidate);
-                     allProposals.put(j, candidates);
+                        TreeSet<Candidate> candidates = new TreeSet<Candidate>();
+                        Candidate candidate = new Candidate(tx,i); 
+                        candidates.add(candidate);
+                        allProposals.put(j, candidates);
                   }
                }
             }
@@ -160,7 +156,7 @@ public class TestCompliantNode {
          // proposals. The value is an ArrayList containing 1x2 Integer arrays. The first
          // element of each array is the id of the transaction being proposed and the second
          // element is the index # of the node proposing the transaction.
-         HashMap<Integer, ArrayList<Integer[]>> allProposals = new HashMap<Integer, ArrayList<Integer[]>>();
+         HashMap<Integer, Set<Candidate>> allProposals = new HashMap<Integer, Set<Candidate>>();
 
          for (int i = 0; i < numNodes; i++) {
             Set<Transaction> proposals = nodes[i].sendToFollowers();
@@ -172,15 +168,11 @@ public class TestCompliantNode {
                   if(!followees[j][i]) continue; // tx only matters if j follows i
 
                   if(allProposals.containsKey(j)) {
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id;
-                     candidate[1] = i; 
+                     Candidate candidate = new Candidate(tx,i); 
                      allProposals.get(j).add(candidate);
                   } else {
-                     ArrayList<Integer[]> candidates = new ArrayList<Integer[]>();
-                     Integer[] candidate = new Integer[2]; 
-                     candidate[0] = tx.id; 
-                     candidate[1] = i;   
+                     TreeSet<Candidate> candidates = new TreeSet<Candidate>();
+                     Candidate candidate = new Candidate(tx,i); 
                      candidates.add(candidate);
                      allProposals.put(j, candidates);
                   }

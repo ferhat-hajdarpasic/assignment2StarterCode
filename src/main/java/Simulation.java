@@ -10,19 +10,32 @@ import java.util.Set;
 import java.util.HashMap;
 
 public class Simulation {
+      public static void main(String[] args) {
+            for (String p_graph : new String[]{".1", ".2", ".3"}) {
+                  for (String p_malicious : new String[]{".15", ".30", ".45"}) {
+                        for (String p_txDistribution : new String[]{".01", ".05", ".10"}) {
+                              for (String numRounds : new String[]{"10", "20"}) {
+                                    run(p_graph, p_malicious, p_txDistribution, numRounds);
+                              }                              
+                        }                              
+                  }
+            }
+      }
+            
+   public static void run(String s_p_graph, String s_p_malicious, String s_p_txDistribution, String s_numRounds) {
 
-   public static void main(String[] args) {
-
-      // There are four required command line arguments: p_graph (.1, .2, .3),
-      // p_malicious (.15, .30, .45), p_txDistribution (.01, .05, .10), 
-      // and numRounds (10, 20). You should try to test your CompliantNode
+      // There are four required command line arguments: 
+      //p_graph          (.1, .2, .3),
+      //p_malicious      (.15, .30, .45),
+      //p_txDistribution (.01, .05, .10), 
+      // and numRounds   (10, 20). You should try to test your CompliantNode
       // code for all 3x3x3x2 = 54 combinations.
 
       int numNodes = 100;
-      double p_graph = Double.parseDouble(args[0]); // parameter for random graph: prob. that an edge will exist
-      double p_malicious = Double.parseDouble(args[1]); // prob. that a node will be set to be malicious
-      double p_txDistribution = Double.parseDouble(args[2]); // probability of assigning an initial transaction to each node 
-      int numRounds = Integer.parseInt(args[3]); // number of simulation rounds your nodes will run for
+      double p_graph = Double.parseDouble(s_p_graph); // parameter for random graph: prob. that an edge will exist
+      double p_malicious = Double.parseDouble(s_p_malicious); // prob. that a node will be set to be malicious
+      double p_txDistribution = Double.parseDouble(s_p_txDistribution); // probability of assigning an initial transaction to each node 
+      int numRounds = Integer.parseInt(s_numRounds); // number of simulation rounds your nodes will run for
 
       // pick which nodes are malicious and which are compliant
       Node[] nodes = new Node[numNodes];
